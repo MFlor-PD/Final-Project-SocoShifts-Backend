@@ -1,0 +1,19 @@
+{
+  "name": "soco-roster-api",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node --watch app.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Maria Florencia Perez D.",
+  "license": "MIT",
+  "description": "Backend for the final project. An API that can ease the proces of rostering for a company.",
+  "dependencies": {
+    "dotenv": "16.5.0",
+    "express": "5.1.0",
+    "express-session": "1.18.1",
+    "mysql2": "3.14.1"
+  }
+}
