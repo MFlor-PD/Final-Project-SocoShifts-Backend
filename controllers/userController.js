@@ -12,8 +12,5 @@ const getUsers = async (req, res) => {
 
 module.exports = {
   getUsers,
-  //getUserById,
-  //createUser,
-  //updateUser,
-  //deleteUser,
+ 
 };

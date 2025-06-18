@@ -9,7 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
-app.get('/', async (req, res) => {
+app.use('/', userRoutes);
+
+/*app.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query(`
       SELECT 
@@ -34,9 +36,7 @@ app.get('/', async (req, res) => {
     console.error('Error consultando la base de datos:', error);
     res.status(500).json({ error: 'Error en el servidor' });
   }
-});
-
-//app.use('/', userRoutes);
+});*/
 
 /*app.get('/', (req, res) => {
   res.send('API is running');
