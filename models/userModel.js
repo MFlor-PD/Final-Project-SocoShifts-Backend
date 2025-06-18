@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+const pool = require('../config/mysqldb');
 
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM usuarios');

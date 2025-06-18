@@ -3,7 +3,7 @@ const app = express();
 const userRoutes = require('./routes/userRoutes');
 require('dotenv').config();
 const PORT = process.env.PORT;
-const pool = require('./config/db');
+const pool = require('./config/mysqldb');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
