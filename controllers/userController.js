@@ -37,9 +37,9 @@ const createUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const userId = req.params.id;
-  const { nombre, apellido, rol_id } = req.body;
+  const { nombre, apellido, rol_id, activo } = req.body;
   try {
-    const updatedUser = await userModel.editUser(userId, { nombre, apellido, rol_id });
+    const updatedUser = await userModel.editUser(userId, { nombre, apellido, rol_id, activo });
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
