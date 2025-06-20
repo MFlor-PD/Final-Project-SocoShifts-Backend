@@ -1,7 +1,3 @@
-// ===============================================
-// ARCHIVO: helpers/logicaCuadrante.js
-// ===============================================
-
 function obtenerDiasDelMes(mes) {
   const [anio, mesStr] = mes.split('-');
   const mesNum = parseInt(mesStr, 10) - 1;
