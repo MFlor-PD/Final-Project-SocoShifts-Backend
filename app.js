@@ -6,6 +6,8 @@ const monthRoutes = require('./routes/monthRoutes');
 const weekRoutes = require('./routes/weekRoutes');
 const rolRoutes = require('./routes/rolRoutes');
 const authRoutes = require('./routes/authRoutes');
+const cuadranteRoutes = require('./routes/cuadranteRoutes');
+
 
 require('dotenv').config();
 
@@ -25,6 +27,7 @@ app.use('/meses', monthRoutes);
 app.use('/dias_semana', weekRoutes);
 app.use('/roles', rolRoutes);
 app.use('/auth', authRoutes);
+app.use('/cuadrante', cuadranteRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
