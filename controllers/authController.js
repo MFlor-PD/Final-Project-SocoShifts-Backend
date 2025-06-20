@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+/*const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const pool = require('../config/postgredb');
 
@@ -37,3 +37,4 @@ const login = async (req, res) => {
 };
 
 module.exports = { login };
+*/

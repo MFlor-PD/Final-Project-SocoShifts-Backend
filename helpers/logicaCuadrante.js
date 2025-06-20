@@ -1,3 +1,7 @@
+// ===============================================
+// ARCHIVO: helpers/logicaCuadrante.js
+// ===============================================
+
 function obtenerDiasDelMes(mes) {
   const [anio, mesStr] = mes.split('-');
   const mesNum = parseInt(mesStr, 10) - 1;
@@ -14,7 +18,6 @@ function obtenerDiasDelMes(mes) {
   return dias;
 }
 
-
 function estaEnPeriodos(fechaStr, periodos) {
   const fecha = new Date(fechaStr).getTime();
   return periodos.some(({ inicio, fin }) => {
@@ -23,7 +26,6 @@ function estaEnPeriodos(fechaStr, periodos) {
     return fecha >= inicioMs && fecha <= finMs;
   });
 }
-
 
 function calcularHorasCumplidas(diasTrabajados, periodos) {
   let total = 0;
@@ -44,7 +46,6 @@ function calcularHorasCumplidas(diasTrabajados, periodos) {
   return total;
 }
 
-
 function generarCuadranteIndividual({
   nombre,
   apellido,
@@ -55,7 +56,6 @@ function generarCuadranteIndividual({
   periodos,
   horasTotalesAsignadas,
 }) {
- 
   const todosLosDias = obtenerDiasDelMes(mes);
 
   const diasTrabajados = todosLosDias.filter(d =>
@@ -63,14 +63,12 @@ function generarCuadranteIndividual({
     && estaEnPeriodos(d.fecha, periodos)
   );
 
-
   const horasCumplidas = calcularHorasCumplidas(diasTrabajados, periodos);
 
   const diasLibres = todosLosDias.filter(d =>
     !diasTrabajados.some(dt => dt.fecha === d.fecha)
     && estaEnPeriodos(d.fecha, periodos)
   );
-
 
   return {
     trabajador: `${nombre} ${apellido}`,
@@ -82,24 +80,6 @@ function generarCuadranteIndividual({
     horas_cumplidas: horasCumplidas,
   };
 }
-
-
-
-const ejemploInput = {
-  nombre: "Florencia",
-  apellido: "Pérez",
-  rol: "Socorrista",
-  playaAsignada: "Playa A",
-  diasPreferidos: ["lunes", "martes", "miércoles", "jueves", "viernes"],
-  mes: "2025-06",
-  periodos: [
-    { inicio: "2025-06-01", fin: "2025-06-15", horasDiarias: 8 },
-    { inicio: "2025-06-16", fin: "2025-06-30", horasDiarias: 8 },
-  ],
-  horasTotalesAsignadas: 160,
-};
-
-console.log(generarCuadranteIndividual(ejemploInput));
 
 module.exports = {
   generarCuadranteIndividual,

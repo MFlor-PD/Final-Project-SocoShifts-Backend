@@ -1,4 +1,4 @@
-const authorizePermissions = (...requiredPermissions) => {
+/*const authorizePermissions = (...requiredPermissions) => {
   return (req, res, next) => {
     const permisos = req.user.permisos || [];
     const tienePermiso = requiredPermissions.some(p => permisos.includes(p) || permisos.includes('acceso_total'));
@@ -11,4 +11,4 @@ const authorizePermissions = (...requiredPermissions) => {
   };
 };
 
-module.exports = authorizePermissions;
+module.exports = authorizePermissions;*/

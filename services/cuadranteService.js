@@ -4,7 +4,6 @@ const { generarCuadranteIndividual } = require('../helpers/logicaCuadrante');
 const horasMensualesPorRol = {
   socorrista: 160,
   supervisor: 172,
-  
 };
 
 const generarCuadrante = async ({ mes, periodos }) => {

@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { cuadranteController } = require('../controllers/cuadranteController');
+const { getCuadranteController, cuadranteController } = require('../controllers/cuadranteController');
+
 
 router.post('/', cuadranteController);
+router.get('/', getCuadranteController)
 
 module.exports = router;
