@@ -1,31 +1,43 @@
-const { getUsuariosConAsignacionesObligatorias, crearAsignacion } = require('../models/cuadranteModel');
+const { 
+  getUsuariosConAsignacionesObligatorias, 
+  crearAsignacion 
+} = require('../models/cuadranteModel');
+const { generarCuadrante } = require('../services/cuadranteService');
 
 const obtenerUsuariosConAsignaciones = async (req, res) => {
   try {
     const usuarios = await getUsuariosConAsignacionesObligatorias();
     res.json(usuarios);
   } catch (error) {
-    console.error('Error obteniendo usuarios con asignaciones:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener asignaciones de usuarios' });
   }
 };
 
 const crearAsignacionHandler = async (req, res) => {
   try {
-    const { usuarioId, fecha, esObligatorio } = req.body;
-    if (!usuarioId || !fecha) {
-      return res.status(400).json({ error: 'Faltan datos obligatorios' });
-    }
-
-    const nuevaAsignacion = await crearAsignacion(usuarioId, fecha, esObligatorio || false);
-    res.status(201).json(nuevaAsignacion);
+    const { usuario_id, fecha, es_obligatorio } = req.body;
+    const result = await crearAsignacion({ usuario_id, fecha, es_obligatorio });
+    res.status(201).json(result);
   } catch (error) {
-    console.error('Error creando asignación:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+    console.error(error);
+    res.status(500).json({ error: 'Error al crear asignación' });
+  }
+};
+
+const generarCuadranteHandler = async (req, res) => {
+  try {
+    const { mes, periodos } = req.body;
+    const resultado = await generarCuadrante({ mes, periodos });
+    res.json(resultado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al generar el cuadrante' });
   }
 };
 
 module.exports = {
   obtenerUsuariosConAsignaciones,
-  crearAsignacionHandler
+  crearAsignacionHandler,
+  generarCuadranteHandler
 };

@@ -18,12 +18,13 @@ const getUsuariosConAsignacionesObligatorias = async () => {
   return result.rows;
 };
 
-const crearAsignacion = async (usuarioId, fecha, esObligatorio) => {
+
+const crearAsignacion = async ({ usuario_id, fecha, es_obligatorio }) => {
   const result = await pool.query(`
     INSERT INTO asignaciones_trabajo (usuario_id, fecha, es_obligatorio)
     VALUES ($1, $2, $3)
     RETURNING *;
-  `, [usuarioId, fecha, esObligatorio]);
+  `, [usuario_id, fecha, es_obligatorio]);
 
   return result.rows[0];
 };

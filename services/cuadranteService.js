@@ -1,29 +1,26 @@
-const { getUsuariosConPreferencias } = require('../models/cuadranteModel');
-const { generarCuadranteIndividual } = require('../helpers/logicaCuadrante');
+const { getUsuariosConAsignacionesObligatorias } = require('../models/cuadranteModel');
+const generarCuadranteDesdeObligatorios = require('../helpers/generarCuadranteDesdeObligatorios');
 
 const horasMensualesPorRol = {
   socorrista: 160,
-  supervisor: 172,
+  supervisor: 172
 };
 
 const generarCuadrante = async ({ mes, periodos }) => {
-  const usuarios = await getUsuariosConPreferencias();
-  const cuadranteFinal = [];
+  const usuarios = await getUsuariosConAsignacionesObligatorias();
 
-  for (const usuario of usuarios) {
-    const cuadrante = generarCuadranteIndividual({
+  const cuadranteFinal = usuarios.map(usuario =>
+    generarCuadranteDesdeObligatorios({
       nombre: usuario.nombre,
       apellido: usuario.apellido,
-      rol: usuario.nombre_rol,
-      playaAsignada: usuario.playas_preferidas[0] || "Sin playa", 
-      diasPreferidos: usuario.dias_preferidos || [],
+      rol: usuario.rol,
+      playa: usuario.playa,
+      dias_obligatorios: usuario.dias_obligatorios || [],
       mes,
       periodos,
-      horasTotalesAsignadas: horasMensualesPorRol[usuario.nombre_rol.toLowerCase()] || 160
-    });
-
-    cuadranteFinal.push(cuadrante);
-  }
+      horasTotalesAsignadas: horasMensualesPorRol[usuario.rol.toLowerCase()] || 160
+    })
+  );
 
   return cuadranteFinal;
 };

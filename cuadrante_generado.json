@@ -1,0 +1,301 @@
+[
+  {
+    "trabajador": "Flor García",
+    "rol": "socorrista",
+    "playa_asignada": "Playa Norte",
+    "dias_trabajados": [
+      {
+        "fecha": "2025-07-01",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-02",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-03",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-04",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-05",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-06",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-07",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-08",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-09",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-10",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-11",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-12",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-13",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-14",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-15",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-16",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-17",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-18",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-19",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-20",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-21",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-22",
+        "dia": "miércoles"
+      }
+    ],
+    "horas_totales": 160,
+    "horas_cumplidas": 162
+  },
+  {
+    "trabajador": "Ana López",
+    "rol": "socorrista",
+    "playa_asignada": "Playa Norte",
+    "dias_trabajados": [
+      {
+        "fecha": "2025-07-01",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-02",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-03",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-04",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-05",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-06",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-07",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-08",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-09",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-10",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-11",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-12",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-13",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-14",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-15",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-16",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-17",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-18",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-19",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-20",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-21",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-22",
+        "dia": "miércoles"
+      }
+    ],
+    "horas_totales": 160,
+    "horas_cumplidas": 162
+  },
+  {
+    "trabajador": "Luis Pérez",
+    "rol": "supervisor",
+    "playa_asignada": "Playa Sur",
+    "dias_trabajados": [
+      {
+        "fecha": "2025-07-01",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-02",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-03",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-04",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-05",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-06",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-07",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-08",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-09",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-10",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-11",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-12",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-13",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-14",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-15",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-16",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-17",
+        "dia": "viernes"
+      },
+      {
+        "fecha": "2025-07-18",
+        "dia": "sábado"
+      },
+      {
+        "fecha": "2025-07-19",
+        "dia": "domingo"
+      },
+      {
+        "fecha": "2025-07-20",
+        "dia": "lunes"
+      },
+      {
+        "fecha": "2025-07-21",
+        "dia": "martes"
+      },
+      {
+        "fecha": "2025-07-22",
+        "dia": "miércoles"
+      },
+      {
+        "fecha": "2025-07-23",
+        "dia": "jueves"
+      },
+      {
+        "fecha": "2025-07-24",
+        "dia": "viernes"
+      }
+    ],
+    "horas_totales": 172,
+    "horas_cumplidas": 174
+  }
+]
