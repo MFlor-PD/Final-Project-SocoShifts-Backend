@@ -25,9 +25,9 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { nombre, apellido, rol_id } = req.body;
+  const { nombre, apellido, rol, playa } = req.body;
   try {
-    const newUser = await userModel.createUser({ nombre, apellido, rol_id });
+    const newUser = await userModel.createUser({ nombre, apellido, rol, playa });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
@@ -37,9 +37,9 @@ const createUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const userId = req.params.id;
-  const { nombre, apellido, rol_id, activo } = req.body;
+  const { nombre, apellido, rol, playa, activo } = req.body;
   try {
-    const updatedUser = await userModel.editUser(userId, { nombre, apellido, rol_id, activo });
+    const updatedUser = await userModel.editUser(userId, { nombre, apellido, rol, playa, activo });
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
@@ -49,6 +49,7 @@ const editUser = async (req, res) => {
     res.status(500).json({ error: 'Error al editar el usuario' });
   }
 };
+
 
 const deleteUser = async (req, res) => {
   const userId = req.params.id;

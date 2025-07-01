@@ -1,27 +1,34 @@
 const pool = require('../config/postgredb');
 
-const getUsuariosConPreferencias = async () => {
+const getUsuariosConAsignacionesObligatorias = async () => {
   const result = await pool.query(`
-    SELECT 
+    SELECT
       u.id,
       u.nombre,
       u.apellido,
-      r.nombre_rol,
-      ARRAY_AGG(DISTINCT d.nombre) AS dias_preferidos,
-      ARRAY_AGG(DISTINCT p.nombre) AS playas_preferidas
+      u.rol,
+      u.playa,
+      COALESCE(ARRAY_AGG(a.fecha ORDER BY a.fecha) FILTER (WHERE a.es_obligatorio), '{}') AS dias_obligatorios
     FROM usuarios u
-    LEFT JOIN roles r ON u.rol_id = r.id
-    LEFT JOIN usuarios_dias_preferidos udp ON u.id = udp.usuario_id
-    LEFT JOIN dias_semana d ON udp.dia_id = d.id
-    LEFT JOIN usuarios_playas_preferidas upp ON u.id = upp.usuario_id
-    LEFT JOIN playas p ON upp.playa_id = p.id
-    WHERE u.activo = true
-    GROUP BY u.id, r.nombre_rol
+    LEFT JOIN asignaciones_trabajo a ON u.id = a.usuario_id
+    GROUP BY u.id
+    ORDER BY u.apellido, u.nombre
   `);
 
   return result.rows;
 };
 
+const crearAsignacion = async (usuarioId, fecha, esObligatorio) => {
+  const result = await pool.query(`
+    INSERT INTO asignaciones_trabajo (usuario_id, fecha, es_obligatorio)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `, [usuarioId, fecha, esObligatorio]);
+
+  return result.rows[0];
+};
+
 module.exports = {
-  getUsuariosConPreferencias
+  getUsuariosConAsignacionesObligatorias,
+  crearAsignacion,
 };

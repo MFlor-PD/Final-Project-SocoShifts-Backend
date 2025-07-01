@@ -1,38 +1,31 @@
-const { generarCuadrante } = require('../services/cuadranteService');
+const { getUsuariosConAsignacionesObligatorias, crearAsignacion } = require('../models/cuadranteModel');
 
-const cuadranteController = async (req, res) => {
+const obtenerUsuariosConAsignaciones = async (req, res) => {
   try {
-    // Detectar datos según método
-    const dataSource = req.method === 'POST' ? req.body : req.query;
-
-    const mes = dataSource.mes || "2025-06";
-
-    // periodos puede venir como JSON string si es GET, o como array si es POST
-    let periodos = dataSource.periodos || [
-      { inicio: `${mes}-01`, fin: `${mes}-15`, horasDiarias: 8 },
-      { inicio: `${mes}-16`, fin: `${mes}-30`, horasDiarias: 8 }
-    ];
-
-    // Si periodos viene como string JSON en query, parsearlo
-    if (typeof periodos === 'string') {
-      try {
-        periodos = JSON.parse(periodos);
-      } catch {
-        // dejar los valores por defecto si parse falla
-      }
-    }
-
-    const cuadrante = await generarCuadrante({ mes, periodos });
-    res.status(200).json(cuadrante);
+    const usuarios = await getUsuariosConAsignacionesObligatorias();
+    res.json(usuarios);
   } catch (error) {
-    console.error('Error al generar el cuadrante:', error.message);
-    res.status(500).json({ error: 'Error al generar el cuadrante' });
+    console.error('Error obteniendo usuarios con asignaciones:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-const getCuadranteController = async (req, res) => cuadranteController(req, res);
+const crearAsignacionHandler = async (req, res) => {
+  try {
+    const { usuarioId, fecha, esObligatorio } = req.body;
+    if (!usuarioId || !fecha) {
+      return res.status(400).json({ error: 'Faltan datos obligatorios' });
+    }
+
+    const nuevaAsignacion = await crearAsignacion(usuarioId, fecha, esObligatorio || false);
+    res.status(201).json(nuevaAsignacion);
+  } catch (error) {
+    console.error('Error creando asignación:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 module.exports = {
-  cuadranteController,
-  getCuadranteController
+  obtenerUsuariosConAsignaciones,
+  crearAsignacionHandler
 };
