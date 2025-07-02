@@ -1,12 +1,11 @@
 const { getUsuariosConAsignacionesObligatorias } = require('../models/cuadranteModel');
 const generarCuadranteDesdeObligatorios = require('../helpers/generarCuadranteDesdeObligatorios');
 
-const horasMensualesPorRol = {
-  socorrista: 160,
-  supervisor: 172
-};
+const generarCuadrante = async ({ mes, periodos, horasMensuales }) => {
+  if (typeof horasMensuales !== 'number') {
+    throw new Error('El campo horasMensuales es obligatorio y debe ser un número');
+  }
 
-const generarCuadrante = async ({ mes, periodos }) => {
   const usuarios = await getUsuariosConAsignacionesObligatorias();
 
   const cuadranteFinal = usuarios.map(usuario =>
@@ -18,7 +17,7 @@ const generarCuadrante = async ({ mes, periodos }) => {
       dias_obligatorios: usuario.dias_obligatorios || [],
       mes,
       periodos,
-      horasTotalesAsignadas: horasMensualesPorRol[usuario.rol.toLowerCase()] || 160
+      horasTotalesAsignadas: horasMensuales
     })
   );
 
@@ -28,3 +27,4 @@ const generarCuadrante = async ({ mes, periodos }) => {
 module.exports = {
   generarCuadrante
 };
+

@@ -83,6 +83,12 @@ JWT_SECRET=...
 * Licencia
 - MIT
 
+
+* Rutas
+get('/') obtiene el cuadrante
+post('/') crea asignaciones de dias
+post('/cuadrante/generar'); genera cuadrante
+
 ------------------------------------------------------------------------------------
 
 * Respuesta de la API: Formato del Cuadrante

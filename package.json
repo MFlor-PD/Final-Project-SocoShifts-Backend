@@ -11,6 +11,7 @@
   "license": "MIT",
   "description": "Backend for the final project. An API that can ease the proces of rostering for a company.",
   "dependencies": {
+    "@prisma/client": "^6.11.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
     "express": "5.1.0",
@@ -20,5 +21,8 @@
     "pg": "^8.16.1",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "5.0.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.11.0"
   }
 }
