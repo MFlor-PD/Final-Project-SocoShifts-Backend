@@ -1,62 +1,47 @@
-const { getUsuariosConAsignacionesObligatorias, crearAsignacion } = require('../models/cuadranteModel');
-const generarCuadranteGlobal = require('../helpers/generarCuadranteGlobal');
-
-const obtenerUsuariosConAsignaciones = async (req, res) => {
-  try {
-    const usuarios = await getUsuariosConAsignacionesObligatorias();
-
-    const usuariosFormateados = usuarios.map(u => ({
-      ...u,
-      dias_obligatorios: u.dias_obligatorios.map(fecha => fecha.split('T')[0])
-    }));
-
-    res.json(usuariosFormateados);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener asignaciones de usuarios' });
-  }
-};
-
-const crearAsignacionHandler = async (req, res) => {
-  try {
-    const { usuario_id, fecha, es_obligatorio } = req.body;
-    const result = await crearAsignacion({ usuario_id, fecha, es_obligatorio });
-
-    res.status(201).json(result);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al crear asignación' });
-  }
-};
+const cuadranteService = require('../services/cuadranteService');
 
 const generarCuadranteHandler = async (req, res) => {
+  const { mes, horasDiarias, horasLegalesMes, socorristasPorDia } = req.body;
+
+  // Validar que los parámetros obligatorios estén presentes
+  if (!mes || !horasDiarias || !horasLegalesMes || !socorristasPorDia) {
+    return res.status(400).json({ error: 'Faltan parámetros obligatorios' });
+  }
+
   try {
-    const { mes, periodos, horasMensuales } = req.body;
+    // Llamar al servicio sin enviar trabajadores (se obtienen dentro del servicio)
+    const resultado = await cuadranteService.generarCuadrante({
+      mes,
+      horasDiarias,
+      horasLegalesMes,
+      socorristasPorDia
+    });
 
-    if (!mes || typeof mes !== 'string' || !/^\d{4}-\d{2}$/.test(mes)) {
-      return res.status(400).json({ error: 'El campo mes es obligatorio y debe ser un string con formato YYYY-MM' });
-    }
-
-    if (!Array.isArray(periodos) || periodos.length === 0) {
-      return res.status(400).json({ error: 'El campo periodos es obligatorio y debe ser un array' });
-    }
-
-    if (typeof horasMensuales !== 'number') {
-      return res.status(400).json({ error: 'El campo horasMensuales es obligatorio y debe ser un número' });
-    }
-
-    const resultado = await generarCuadranteGlobal({ mes, periodos, horasMensuales });
     res.json(resultado);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error al generar el cuadrante' });
+    res.status(500).json({ error: 'Error generando cuadrante' });
+  }
+};
+
+const obtenerCuadranteHandler = async (req, res) => {
+  try {
+    const { mes } = req.query;
+    if (!mes) {
+      return res.status(400).json({ error: 'Parámetro mes es obligatorio (formato YYYY-MM)' });
+    }
+
+    // Suponiendo que tienes este método en el servicio para recuperar el cuadrante
+    const cuadrante = await cuadranteService.obtenerCuadrante(mes);
+
+    res.json(cuadrante);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener cuadrante' });
   }
 };
 
 module.exports = {
-  obtenerUsuariosConAsignaciones,
-  crearAsignacionHandler,
-  generarCuadranteHandler
+  generarCuadranteHandler,
+  obtenerCuadranteHandler,
 };

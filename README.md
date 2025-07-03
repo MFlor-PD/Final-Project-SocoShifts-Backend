@@ -2,12 +2,12 @@
 
 API para la gestión dinámica y automatizada de cuadrantes laborales.
 
-DESCRIPCION
+# DESCRIPCION
 Esta aplicación web tiene como objetivo facilitar, optimizar y hacer más eficiente la generación de cuadrantes en entornos altamente dinámicos, típicos de trabajos de temporada como socorrismo, hostelería y restauración.
 
 Actualmente, la aplicación está enfocada en el sector de salvamento y socorrismo, pero está diseñada para escalar y adaptarse a diferentes rubros mediante un sistema de selección inicial que solicitará datos específicos según el área elegida.
 
-FUNCIONALIDADES PRINCIPALES
+# FUNCIONALIDADES PRINCIPALES
 * Carga de datos de trabajadores: nombre, apellido, rol, playa asignada, y autorización mediante token para manipular datos (crear, editar, eliminar o acceder a información sensible).
 
 * Configuración del cuadrante: selección del mes para generar el cuadrante, opción de definir días preferentes de trabajo (opcional).
@@ -19,7 +19,7 @@ FUNCIONALIDADES PRINCIPALES
 * Visualización: frontend desarrollado en React que muestra un calendario día a día con los trabajadores activos y la playa asignada.
 
 
-FUNCIONALIDADES A DESARROLLAR
+# FUNCIONALIDADES A DESARROLLAR
 * Definir parámetros como cantidad de roles y trabajadores por playa (ejemplo: Playa Sur → 1 supervisor, 3 socorristas).
 
 * Cálculo y generación de nóminas considerando cargas impositivas y horas trabajadas.
@@ -31,7 +31,7 @@ FUNCIONALIDADES A DESARROLLAR
 * Compartir cuadrantes vía email o enlace público.
 
 
-INSTALACION Y CONFIGURACION DEL BACKEND
+# INSTALACION Y CONFIGURACION DEL BACKEND
 * Clonar o forkear el repositorio desde GitHub.
 * Inicializar el proyecto con: npm install.
 * Instalar dependencias necesarias:
@@ -46,9 +46,9 @@ INSTALACION Y CONFIGURACION DEL BACKEND
 "swagger-ui-express"
 "jest"
 
-* Configurar la base de datos PostgreSQL en AWS.
+# Configurar la base de datos PostgreSQL en AWS.
 
-* Crear tablas principales mínimas en PostgreSQL:
+# Crear tablas principales mínimas en PostgreSQL:
 
 - usuarios
 - rol
@@ -56,7 +56,7 @@ INSTALACION Y CONFIGURACION DEL BACKEND
 - mes
 - dia_de_semana
 
-* Estructura del proyecto backend
+# Estructura del proyecto backend
 
 /docs                # Documentación Swagger
 /test.js             # Tests con Jest y Supertest
@@ -70,7 +70,7 @@ INSTALACION Y CONFIGURACION DEL BACKEND
 /middlewares         # Middleware para autenticación JWT y protección de rutas
 app.js               # Entrada principal de la aplicación backend
 
-* Variables de entorno
+# Variables de entorno
 El archivo .env debe contener al menos:
 
 PORT=3000
@@ -80,18 +80,120 @@ DB_PASSWORD=...
 DB_NAME=...
 JWT_SECRET=...
 
-* Licencia
+# Licencia
 - MIT
 
 
-* Rutas
-get('/') obtiene el cuadrante
-post('/') crea asignaciones de dias
-post('/cuadrante/generar'); genera cuadrante
+# Rutas
+- USUARIOS:
+* get('/') Devuelve todos los usuarios http://localhost:3000/usuarios    
+* get('/:id') Devuelve usuario por ID  http://localhost:3000/usuarios/id
+* post('/'); Crea nuevos usuarios    POST http://localhost:3000/usuarios :
+
+Ejemplo de body en Postman:
+{
+  "nombre": "Lucas",
+  "apellido": "Martínez",
+  "rol": "Socorrista",
+  "playa": "Playa Norte"
+}
+
+- CUADRANTE:
+* get('/') Devuelve todos los usuarios con sus asignaciones obligatorias.
+
+Ejemplo de devolucion en Postman: GET http://localhost:3000/ => "Welcome to the API for the Beach Management System"
+                   
+                                  GET http://localhost:3000/cuadrante?mes=2025-08 => Devolvera un Json asi:
+[
+    {
+        "id": 1,
+        "nombre": "Flor",
+        "apellido": "García",
+        "rol": "socorrista",
+        "playa": "Playa Norte",
+        "dias_obligatorios": [
+            "2025-07-01",
+            "2025-07-10",
+            "2025-07-31"
+        ]
+    },
+    {
+        "id": 6,
+        "nombre": "Ana",
+        "apellido": "López",
+        "rol": "socorrista",
+        "playa": "Playa Norte",
+        "dias_obligatorios": []
+    },
+    {
+        "id": 2,
+        "nombre": "Luis",
+        "apellido": "Pérez",
+        "rol": "supervisor",
+        "playa": "Playa Sur",
+        "dias_obligatorios": [
+            "2025-07-02",
+            "2025-07-25"
+        ]
+    },
+    {
+        "id": 7,
+        "nombre": "Test",
+        "apellido": "Usuario",
+        "rol": "tester",
+        "playa": "Playa Test",
+        "dias_obligatorios": []
+    }
+]
+
+* post('/cuadrante') Crea una nueva asignación de un día para un trabajador. Para registrar manualmente un día obligatorio (o no) para un trabajador antes de generar el cuadrante. Crea una nueva asignación (posiblemente obligatoria) en la base de datos para el trabajador con usuario_id en la fecha indicada.
+
+Ejemplo de body en Postman: POST http://localhost:3000/cuadrante
+
+{
+  "usuario_id": 1,
+  "fecha": "2025-08-12",
+  "es_obligatorio": true
+}
+
+ejemplo de respuesta:
+{
+    "id": 9,
+    "usuario_id": 1,
+    "fecha": "2025-08-11T22:00:00.000Z",
+    "es_obligatorio": true
+}
+
+* post('/cuadrante/generar'); Genera el cuadrante completo del mes para todos los trabajadores según:
+
+      - Las asignaciones obligatorias existentes
+
+      - La configuración de periodos (horas por día)
+
+      - Las horas mensuales deseadas
+
+Ejemplo de body en Postman:  POST http://localhost:3000/cuadrante/generar
+{
+  "mes": "2025-08",
+  "periodos": [
+    {
+      "inicio": "2025-08-01",
+      "fin": "2025-08-15",
+      "horasPorDia": 9.5
+    },
+    {
+      "inicio": "2025-08-16",
+      "fin": "2025-08-31",
+      "horasPorDia": 7.5
+    }
+  ],
+  "horasMensuales": 174
+}
+
 
 ------------------------------------------------------------------------------------
 
-* Respuesta de la API: Formato del Cuadrante
+# Respuesta de la API: Formato del Cuadrante
 
 La API devuelve el cuadrante en formato JSON con la siguiente estructura:
 

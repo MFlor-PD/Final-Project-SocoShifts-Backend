@@ -15,8 +15,9 @@ model asignaciones_trabajo {
   es_obligatorio Boolean? @default(false)
   usuarios       usuarios @relation(fields: [usuario_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([usuario_id, fecha])
+  @@unique([usuario_id, fecha], name: "usuario_id_fecha")
 }
+
 
 model usuarios {
   id                   Int                    @id @default(autoincrement())

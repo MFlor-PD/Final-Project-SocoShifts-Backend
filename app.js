@@ -1,10 +1,13 @@
+require('dotenv').config();
+
 const express = require('express')
 const app = express();
 const pool = require('./config/postgredb');
 const cuadranteRoutes = require('./routes/cuadranteRoutes');
+const userRoutes = require('./routes/userRoutes');
+
 const PORT = process.env.PORT;
 
-require('dotenv').config();
 
 
 app.use(express.urlencoded({ extended: true }));
@@ -15,7 +18,7 @@ app.get('/', (req, res) => {
 });
 
 
-
+app.use('/usuarios', userRoutes);
 app.use('/cuadrante', cuadranteRoutes)
 
 

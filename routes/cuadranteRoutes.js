@@ -1,16 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { obtenerUsuariosConAsignaciones, crearAsignacionHandler, generarCuadranteHandler } = require('../controllers/cuadranteController');
+const { generarCuadranteHandler, obtenerCuadranteHandler } = require('../controllers/cuadranteController');
 
-
-
-router.get('/', obtenerUsuariosConAsignaciones);
-router.post('/', crearAsignacionHandler);
+router.get('/', obtenerCuadranteHandler);
 router.post('/generar', generarCuadranteHandler);
 
 module.exports = router;
-
-
-
-
-
