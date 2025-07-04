@@ -54,6 +54,8 @@ npm install
 - DEPENDENCIAS:
 
 npm install bcryptjs dotenv express jsonwebtoken mysql2 pg swagger-jsdoc swagger-ui-express jest @prisma/client
+npm install date-fns
+
 
 
 - CONFIGURAR BBDD PostgreSQL (AWS recomendado)
