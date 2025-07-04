@@ -27,7 +27,7 @@ async function obtenerCuadranteHandler(req, res) {
   if (!mes) return res.status(400).json({ error: 'Parámetro mes es obligatorio (formato YYYY-MM)' });
 
   try {
-    const cuadrante = await cuadranteService.obtenerCuadrante(mes);
+    const cuadrante = await cuadranteService.obtenerCuadranteService(mes);
     res.json(cuadrante);
   } catch (error) {
     console.error('Error al obtener cuadrante:', error);
@@ -40,7 +40,7 @@ async function editarAsignacionHandler(req, res) {
   if (error) return res.status(400).json({ error });
 
   try {
-    const asignacionEditada = await cuadranteService.editarAsignacion(req.body);
+    const asignacionEditada = await cuadranteService.editarAsignacionService(req.body);
     res.json({ message: 'Asignación editada con éxito', asignacion: asignacionEditada });
   } catch (error) {
     console.error('Error al editar asignación:', error);
@@ -53,7 +53,7 @@ async function eliminarAsignacionHandler(req, res) {
   if (error) return res.status(400).json({ error });
 
   try {
-    const asignacionEliminada = await cuadranteService.eliminarAsignacion(req.body);
+    const asignacionEliminada = await cuadranteService.eliminarAsignacionService(req.body);
     res.json({ message: 'Asignación eliminada con éxito', asignacion: asignacionEliminada });
   } catch (error) {
     console.error('Error al eliminar asignación:', error);

@@ -5,6 +5,9 @@ const app = express();
 const pool = require('./config/postgredb');
 const cuadranteRoutes = require('./routes/cuadranteRoutes');
 const userRoutes = require('./routes/userRoutes');
+const configuracionCuadranteRoutes = require('./routes/configuracionCuadranteRoutes');
+
+
 
 const PORT = process.env.PORT;
 
@@ -14,12 +17,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Welcome to the API for the Beach Management System');
+  res.send('Welcome to the API for the Beach Management System');
 });
 
 
 app.use('/usuarios', userRoutes);
 app.use('/cuadrante', cuadranteRoutes)
+app.use('/configuracion-cuadrante', configuracionCuadranteRoutes);
 
 
 app.use((err, req, res, next) => {

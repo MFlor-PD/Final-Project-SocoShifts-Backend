@@ -27,3 +27,13 @@ model usuarios {
   playa                String?
   asignaciones_trabajo asignaciones_trabajo[]
 }
+
+model configuracion_cuadrante {
+  id                Int      @id @default(autoincrement())
+  mes               String   @unique // formato "YYYY-MM"
+  horasDiarias      Float
+  horasLegalesMes   Float
+  socorristasPorDia Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

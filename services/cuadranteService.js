@@ -1,5 +1,13 @@
 const distribuirTrabajadoresAleatorio = require('../helpers/distribucionTrabajadores');
-const { guardarCuadranteEnBD, editarAsignacion, eliminarAsignacion } = require('../helpers/guardarCuadranteEnBD');
+const {
+  guardarCuadranteEnBD,
+  obtenerConfiguracionCuadrante,
+  guardarConfiguracionCuadrante,
+  editarAsignacion,
+  eliminarAsignacion,
+  borrarMesCompleto
+} = require('../helpers/guardarCuadranteEnBD');
+
 const pool = require('../config/postgredb');
 
 async function obtenerTrabajadoresActivos() {
@@ -25,27 +33,30 @@ function transformarFilasACuadrante(rows) {
   return Array.from(resultadoMap, ([trabajador, dias_trabajados]) => ({ trabajador, dias_trabajados }));
 }
 
-async function generarCuadrante({ mes, horasDiarias, horasLegalesMes, socorristasPorDia }) {
+async function generarCuadranteService({ mes }) {
   try {
+    const config = await obtenerConfiguracionCuadrante(mes);
+    if (!config) throw new Error('No hay configuración cargada para este mes');
+
+    const { horas_diarias, horas_legales_mes, socorristas_por_dia } = config;
     const trabajadores = await obtenerTrabajadoresActivos();
 
     const resultado = distribuirTrabajadoresAleatorio({
       mes,
       trabajadores,
-      horasDiarias,
-      horasLegalesMes,
-      socorristasPorDia
+      horasLegalesMes: horas_legales_mes,
+      socorristasPorDia: socorristas_por_dia,
+      horasPorDiaFn: () => horas_diarias
     });
 
     await guardarCuadranteEnBD(resultado);
-
     return resultado;
   } catch (error) {
     throw new Error(`Error generando cuadrante: ${error.message}`);
   }
 }
 
-async function obtenerCuadrante(mes) {
+async function obtenerCuadranteService(mes) {
   try {
     const query = `
       SELECT u.nombre AS trabajador, at.fecha
@@ -77,9 +88,37 @@ async function eliminarAsignacionService({ usuario_id, fecha }) {
   }
 }
 
+async function guardarConfiguracionService({ mes, horas_diarias, horas_legales_mes, socorristas_por_dia }) {
+  try {
+    return await guardarConfiguracionCuadrante({ mes, horas_diarias, horas_legales_mes, socorristas_por_dia });
+  } catch (error) {
+    throw new Error(`Error guardando configuración: ${error.message}`);
+  }
+}
+
+async function obtenerConfiguracionService(mes) {
+  try {
+    return await obtenerConfiguracionCuadrante(mes);
+  } catch (error) {
+    throw new Error(`Error obteniendo configuración: ${error.message}`);
+  }
+}
+
+async function borrarMesService(mes) {
+  if (!mes) throw new Error('Mes es obligatorio para borrar datos');
+  try {
+    return await borrarMesCompleto(mes);
+  } catch (error) {
+    throw new Error(`Error borrando mes: ${error.message}`);
+  }
+}
+
 module.exports = {
-  generarCuadrante,
-  obtenerCuadrante,
-  editarAsignacion: editarAsignacionService,
-  eliminarAsignacion: eliminarAsignacionService,
+  generarCuadranteService,
+  obtenerCuadranteService,
+  editarAsignacionService,
+  eliminarAsignacionService,
+  guardarConfiguracionService,
+  obtenerConfiguracionService,
+  borrarMesService,
 };
