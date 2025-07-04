@@ -1,47 +1,70 @@
 const cuadranteService = require('../services/cuadranteService');
 
-const generarCuadranteHandler = async (req, res) => {
-  const { mes, horasDiarias, horasLegalesMes, socorristasPorDia } = req.body;
-
-  // Validar que los parámetros obligatorios estén presentes
-  if (!mes || !horasDiarias || !horasLegalesMes || !socorristasPorDia) {
-    return res.status(400).json({ error: 'Faltan parámetros obligatorios' });
+function validarCampos(obj, campos) {
+  for (const campo of campos) {
+    if (obj[campo] === undefined || obj[campo] === null) {
+      return `Falta el campo obligatorio: ${campo}`;
+    }
   }
+  return null;
+}
+
+async function generarCuadranteHandler(req, res) {
+  const error = validarCampos(req.body, ['mes', 'horasDiarias', 'horasLegalesMes', 'socorristasPorDia']);
+  if (error) return res.status(400).json({ error });
 
   try {
-    // Llamar al servicio sin enviar trabajadores (se obtienen dentro del servicio)
-    const resultado = await cuadranteService.generarCuadrante({
-      mes,
-      horasDiarias,
-      horasLegalesMes,
-      socorristasPorDia
-    });
-
+    const resultado = await cuadranteService.generarCuadrante(req.body);
     res.json(resultado);
   } catch (error) {
-    console.error(error);
+    console.error('Error generando cuadrante:', error);
     res.status(500).json({ error: 'Error generando cuadrante' });
   }
-};
+}
 
-const obtenerCuadranteHandler = async (req, res) => {
+async function obtenerCuadranteHandler(req, res) {
+  const { mes } = req.query;
+  if (!mes) return res.status(400).json({ error: 'Parámetro mes es obligatorio (formato YYYY-MM)' });
+
   try {
-    const { mes } = req.query;
-    if (!mes) {
-      return res.status(400).json({ error: 'Parámetro mes es obligatorio (formato YYYY-MM)' });
-    }
-
-    // Suponiendo que tienes este método en el servicio para recuperar el cuadrante
     const cuadrante = await cuadranteService.obtenerCuadrante(mes);
-
     res.json(cuadrante);
   } catch (error) {
-    console.error(error);
+    console.error('Error al obtener cuadrante:', error);
     res.status(500).json({ error: 'Error al obtener cuadrante' });
   }
-};
+}
+
+async function editarAsignacionHandler(req, res) {
+  const error = validarCampos(req.body, ['usuario_id', 'fecha', 'es_obligatorio']);
+  if (error) return res.status(400).json({ error });
+
+  try {
+    const asignacionEditada = await cuadranteService.editarAsignacion(req.body);
+    res.json({ message: 'Asignación editada con éxito', asignacion: asignacionEditada });
+  } catch (error) {
+    console.error('Error al editar asignación:', error);
+    res.status(500).json({ error: 'Error al editar asignación' });
+  }
+}
+
+async function eliminarAsignacionHandler(req, res) {
+  const error = validarCampos(req.body, ['usuario_id', 'fecha']);
+  if (error) return res.status(400).json({ error });
+
+  try {
+    const asignacionEliminada = await cuadranteService.eliminarAsignacion(req.body);
+    res.json({ message: 'Asignación eliminada con éxito', asignacion: asignacionEliminada });
+  } catch (error) {
+    console.error('Error al eliminar asignación:', error);
+    res.status(500).json({ error: 'Error al eliminar asignación' });
+  }
+}
 
 module.exports = {
   generarCuadranteHandler,
   obtenerCuadranteHandler,
+  editarAsignacionHandler,
+  eliminarAsignacionHandler,
 };
+

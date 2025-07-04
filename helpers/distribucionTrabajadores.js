@@ -1,54 +1,59 @@
 const obtenerDiasDelMes = require('./obtenerMes');
 const { getNumeroSemana } = require('./utilsFechas');
 
+function calcularMaxDiasSemana(horasPorDia, maxHorasSemana = 40) {
+  return Math.min(Math.floor(maxHorasSemana / horasPorDia), 5);
+}
+
+function asignarDiaATrabajador(trabajador, dia, horasDia, semanaNum) {
+  trabajador.diasTrabajados.push({ fecha: dia.fecha, dia: dia.dia });
+  trabajador.horasCumplidas += horasDia;
+  trabajador.diasPorSemana[semanaNum] = (trabajador.diasPorSemana[semanaNum] || 0) + 1;
+}
+
+function puedeTrabajarHoy(trabajador, fecha, maxDiasSemana, semanaNum) {
+  const diasEstaSemana = trabajador.diasPorSemana[semanaNum] || 0;
+  const yaAsignadoHoy = trabajador.diasTrabajados.some(d => d.fecha === fecha);
+  return diasEstaSemana < maxDiasSemana && !yaAsignadoHoy;
+}
+
 function distribuirTrabajadoresAleatorio({
   mes,
-  trabajadores,      // [{ id, nombre }]
+  trabajadores,
   horasLegalesMes,
   socorristasPorDia,
-  horasPorDiaFn,     // función (fecha) => número de horas, opcional, default 8h
-  maxDiasSemana = 4, // máximo días trabajados por semana para cada trabajador
+  horasPorDiaFn = () => 8,
 }) {
   const diasDelMes = obtenerDiasDelMes(mes);
-  const totalDiasMes = diasDelMes.length;
+  if (diasDelMes.length === 0) return [];
 
-  // Inicializamos asignaciones por trabajador
-  const asignaciones = trabajadores.map(t => ({
-    ...t,
+  // Tomamos las horas del primer día para calcular maxDiasSemana
+  const horasPrimerDia = horasPorDiaFn(diasDelMes[0].fecha);
+  const maxDiasSemana = calcularMaxDiasSemana(horasPrimerDia);
+
+  const asignaciones = trabajadores.map(({ id, nombre }) => ({
+    id,
+    nombre,
     diasTrabajados: [],
     horasCumplidas: 0,
-    diasPorSemana: {}, // { semanaNum: díasAsignados }
+    diasPorSemana: {},
   }));
 
   for (const dia of diasDelMes) {
-    const fecha = dia.fecha;
-    const horasDia = horasPorDiaFn ? horasPorDiaFn(fecha) : 8;
+    const { fecha } = dia;
+    const horasDia = horasPorDiaFn(fecha);
+    const semanaNum = getNumeroSemana(fecha, mes);
 
-    // Ordenar trabajadores por menos horas cumplidas para balancear carga
     asignaciones.sort((a, b) => a.horasCumplidas - b.horasCumplidas);
 
     let asignadosHoy = 0;
 
     for (const trabajador of asignaciones) {
       if (asignadosHoy >= socorristasPorDia) break;
-
-      const semanaNum = getNumeroSemana(fecha, mes);
-      const diasEstaSemana = trabajador.diasPorSemana[semanaNum] || 0;
-
-      // Saltar si ya tiene max días esta semana o ya asignado este día
-      if (
-        diasEstaSemana >= maxDiasSemana ||
-        trabajador.diasTrabajados.some(d => d.fecha === fecha)
-      ) {
-        continue;
+      if (puedeTrabajarHoy(trabajador, fecha, maxDiasSemana, semanaNum)) {
+        asignarDiaATrabajador(trabajador, dia, horasDia, semanaNum);
+        asignadosHoy++;
       }
-
-      // Asignar día
-      trabajador.diasTrabajados.push({ fecha, dia: dia.dia });
-      trabajador.horasCumplidas += horasDia;
-      trabajador.diasPorSemana[semanaNum] = diasEstaSemana + 1;
-
-      asignadosHoy++;
     }
 
     if (asignadosHoy < socorristasPorDia) {
@@ -56,13 +61,12 @@ function distribuirTrabajadoresAleatorio({
     }
   }
 
-  return asignaciones.map(t => ({
-    trabajador: t.nombre,
-    dias_trabajados: t.diasTrabajados,
-    horas_cumplidas: t.horasCumplidas,
-    eficiencia: `${Math.round((t.horasCumplidas / horasLegalesMes) * 100)}%`
+  return asignaciones.map(({ nombre, diasTrabajados, horasCumplidas }) => ({
+    trabajador: nombre,
+    dias_trabajados: diasTrabajados,
+    horas_cumplidas: horasCumplidas,
+    eficiencia: `${Math.round((horasCumplidas / horasLegalesMes) * 100)}%`,
   }));
 }
 
 module.exports = distribuirTrabajadoresAleatorio;
-

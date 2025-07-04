@@ -36,5 +36,46 @@ async function guardarCuadranteEnBD(cuadrante) {
   }
 }
 
-module.exports = { guardarCuadranteEnBD };
+async function editarAsignacion({ usuario_id, fecha, es_obligatorio }) {
+  try {
+    const asignacionEditada = await prisma.asignaciones_trabajo.upsert({
+      where: {
+        usuario_id_fecha: {
+          usuario_id,
+          fecha: new Date(fecha)
+        }
+      },
+      update: {
+        es_obligatorio
+      },
+      create: {
+        usuario_id,
+        fecha: new Date(fecha),
+        es_obligatorio
+      }
+    });
+    return asignacionEditada;
+  } catch (error) {
+    console.error("Error editando asignación:", error);
+    throw error;
+  }
+}
 
+async function eliminarAsignacion({ usuario_id, fecha }) {
+  const asignacionEliminada = await prisma.asignaciones_trabajo.delete({
+    where: {
+      usuario_id_fecha: {
+        usuario_id,
+        fecha: new Date(fecha),
+      },
+    },
+  });
+  return asignacionEliminada;
+}
+
+
+module.exports = {
+  guardarCuadranteEnBD,
+  editarAsignacion,
+  eliminarAsignacion,
+};

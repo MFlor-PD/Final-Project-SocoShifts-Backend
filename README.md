@@ -86,9 +86,10 @@ JWT_SECRET=...
 
 # Rutas
 - USUARIOS:
-* get('/') Devuelve todos los usuarios http://localhost:3000/usuarios    
-* get('/:id') Devuelve usuario por ID  http://localhost:3000/usuarios/id
-* post('/'); Crea nuevos usuarios    POST http://localhost:3000/usuarios :
+* get('/') Devuelve todos los usuarios -> GET http://localhost:3000/usuarios    
+* get('/:id') Devuelve usuario por ID  -> GET http://localhost:3000/usuarios/id
+* post('/'); Crea nuevos usuarios      -> POST http://localhost:3000/usuarios
+* put('/:id') Edita usuarios           -> PUT http://localhost:3000/usuarios/id
 
 Ejemplo de body en Postman:
 {
@@ -103,7 +104,9 @@ Ejemplo de body en Postman:
 
 Ejemplo de devolucion en Postman: GET http://localhost:3000/ => "Welcome to the API for the Beach Management System"
                    
-                                  GET http://localhost:3000/cuadrante?mes=2025-08 => Devolvera un Json asi:
+                                  GET http://localhost:3000/cuadrante?mes=YYYY-MM
+
+Ejemplo: GET http://localhost:3000/cuadrante?mes=2025-08 => Devolvera un Json asi:
 [
     {
         "id": 1,
@@ -190,7 +193,40 @@ Ejemplo de body en Postman:  POST http://localhost:3000/cuadrante/generar
   "horasMensuales": 174
 }
 
+o si es todo el mes:
 
+{
+  "mes": "2025-08",
+  "horasDiarias": 9.5,
+  "horasLegalesMes": 174,
+  "socorristasPorDia": 3
+}
+
+* put('/cuadrante/editar') ->  PUT http://localhost:3000/cuadrante/editar => Edita asignaciones concretas con el valor de true o false si una asignacion de dia es obligatoria o no. 
+
+Ejemplo de Body:
+
+{
+  "usuario_id": 5,
+  "fecha": "2025-08-08",
+  "es_obligatorio": true
+}
+
+
+* delete ('/cuadrante/eliminar') -> DELETE http://localhost:3000/cuadrante/eliminar => Elimina dias asignados.
+
+Ejemplo de body:
+
+
+{
+  "usuario_id": 5,
+  "fecha": "2025-08-08"
+}
+Aqui borrara el dia 8 para el usuario cuyo id es 5.
+
+Edit trabaja con la funcion [upsert] de prisma, que combina update + insert, es decir si existe => actualiza y sino => lo crea, por lo tanto: 
+- Para reasignar un dia que tiene un trabajador a otro, debemos primero borrar el dia del trabajador uno 1, y realizar el edit con el body indicando el dia al trabajador 2.
+- Si se quiere agregar un dia, solo basta con edit y agregar el dia al trabajador seleccionado.
 ------------------------------------------------------------------------------------
 
 # Respuesta de la API: Formato del Cuadrante

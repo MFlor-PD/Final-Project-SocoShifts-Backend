@@ -1,44 +1,15 @@
 const distribuirTrabajadoresAleatorio = require('../helpers/distribucionTrabajadores');
-const { guardarCuadranteEnBD } = require('../helpers/guardarCuadranteEnBD');
-const pool = require('../config/postgredb'); // Ajusta la ruta según tu proyecto
+const { guardarCuadranteEnBD, editarAsignacion, eliminarAsignacion } = require('../helpers/guardarCuadranteEnBD');
+const pool = require('../config/postgredb');
 
-async function generarCuadrante({ mes, horasDiarias, horasLegalesMes, socorristasPorDia }) {
-  // Obtener trabajadores activos desde la base de datos
+async function obtenerTrabajadoresActivos() {
   const query = 'SELECT id, nombre FROM usuarios';
-  const { rows: trabajadores } = await pool.query(query);
-
-  if (!trabajadores.length) {
-    throw new Error('No hay trabajadores activos para asignar');
-  }
-
-  // Llamar al helper que hace la distribución
-  const resultado = distribuirTrabajadoresAleatorio({
-    mes,
-    trabajadores,
-    horasDiarias,
-    horasLegalesMes,
-    socorristasPorDia
-  });
-
-  // Guardar el cuadrante generado en la base de datos
-  await guardarCuadranteEnBD(resultado);
-
-  return resultado;
+  const { rows } = await pool.query(query);
+  if (!rows.length) throw new Error('No hay trabajadores activos para asignar');
+  return rows;
 }
 
-async function obtenerCuadrante(mes) {
-  // Aquí puedes implementar lógica para recuperar el cuadrante de la base
-  // por ejemplo, consultar la tabla asignaciones_trabajo filtrando por mes
-  const query = `
-    SELECT u.nombre AS trabajador, at.fecha
-    FROM asignaciones_trabajo at
-    JOIN usuarios u ON u.id = at.usuario_id
-    WHERE to_char(at.fecha, 'YYYY-MM') = $1
-    ORDER BY u.nombre, at.fecha
-  `;
-  const { rows } = await pool.query(query, [mes]);
-
-  // Organizar los datos para devolverlos en un formato similar al generado
+function transformarFilasACuadrante(rows) {
   const resultadoMap = new Map();
 
   rows.forEach(({ trabajador, fecha }) => {
@@ -51,15 +22,64 @@ async function obtenerCuadrante(mes) {
     });
   });
 
-  const resultado = [];
-  for (const [trabajador, dias_trabajados] of resultadoMap.entries()) {
-    resultado.push({ trabajador, dias_trabajados });
-  }
+  return Array.from(resultadoMap, ([trabajador, dias_trabajados]) => ({ trabajador, dias_trabajados }));
+}
 
-  return resultado;
+async function generarCuadrante({ mes, horasDiarias, horasLegalesMes, socorristasPorDia }) {
+  try {
+    const trabajadores = await obtenerTrabajadoresActivos();
+
+    const resultado = distribuirTrabajadoresAleatorio({
+      mes,
+      trabajadores,
+      horasDiarias,
+      horasLegalesMes,
+      socorristasPorDia
+    });
+
+    await guardarCuadranteEnBD(resultado);
+
+    return resultado;
+  } catch (error) {
+    throw new Error(`Error generando cuadrante: ${error.message}`);
+  }
+}
+
+async function obtenerCuadrante(mes) {
+  try {
+    const query = `
+      SELECT u.nombre AS trabajador, at.fecha
+      FROM asignaciones_trabajo at
+      JOIN usuarios u ON u.id = at.usuario_id
+      WHERE to_char(at.fecha, 'YYYY-MM') = $1
+      ORDER BY u.nombre, at.fecha
+    `;
+    const { rows } = await pool.query(query, [mes]);
+    return transformarFilasACuadrante(rows);
+  } catch (error) {
+    throw new Error(`Error obteniendo cuadrante: ${error.message}`);
+  }
+}
+
+async function editarAsignacionService({ usuario_id, fecha, es_obligatorio }) {
+  try {
+    return await editarAsignacion({ usuario_id, fecha, es_obligatorio });
+  } catch (error) {
+    throw new Error(`Error editando asignación: ${error.message}`);
+  }
+}
+
+async function eliminarAsignacionService({ usuario_id, fecha }) {
+  try {
+    return await eliminarAsignacion({ usuario_id, fecha });
+  } catch (error) {
+    throw new Error(`Error eliminando asignación: ${error.message}`);
+  }
 }
 
 module.exports = {
   generarCuadrante,
   obtenerCuadrante,
+  editarAsignacion: editarAsignacionService,
+  eliminarAsignacion: eliminarAsignacionService,
 };
