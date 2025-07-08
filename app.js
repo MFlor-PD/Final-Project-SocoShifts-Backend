@@ -6,13 +6,13 @@ const pool = require('./config/postgredb');
 const cuadranteRoutes = require('./routes/cuadranteRoutes');
 const userRoutes = require('./routes/userRoutes');
 const configuracionCuadranteRoutes = require('./routes/configuracionCuadranteRoutes');
-
+const cors = require('cors');
 
 
 const PORT = process.env.PORT;
 
 
-
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
