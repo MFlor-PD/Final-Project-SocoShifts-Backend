@@ -17,6 +17,21 @@ async function obtenerTrabajadoresActivos() {
   return rows;
 }
 
+// 🔧 NUEVA función para transformar periodos a función de horas por día
+function crearHorasPorDiaFn(periodos) {
+  return (fechaStr) => {
+    const fecha = new Date(fechaStr);
+    for (const periodo of periodos) {
+      const inicio = new Date(periodo.inicio);
+      const fin = new Date(periodo.fin);
+      if (fecha >= inicio && fecha <= fin) {
+        return periodo.horasPorDia;
+      }
+    }
+    return undefined;
+  };
+}
+
 function transformarFilasACuadrante(rows) {
   const resultadoMap = new Map();
 
@@ -33,20 +48,34 @@ function transformarFilasACuadrante(rows) {
   return Array.from(resultadoMap, ([trabajador, dias_trabajados]) => ({ trabajador, dias_trabajados }));
 }
 
-async function generarCuadranteService({ mes }) {
+// 🧠 FUNCIONALIDAD PRINCIPAL
+async function generarCuadranteService({ mes, periodos, horasMensuales, socorristasPorDia }) {
   try {
-    const config = await obtenerConfiguracionCuadrante(mes);
-    if (!config) throw new Error('No hay configuración cargada para este mes');
-
-    const { horas_diarias, horas_legales_mes, socorristas_por_dia } = config;
     const trabajadores = await obtenerTrabajadoresActivos();
+
+    let horasLegalesMes, socosPorDia, horasPorDiaFn;
+
+    if (periodos && periodos.length) {
+      horasLegalesMes = horasMensuales;
+      socosPorDia = socorristasPorDia;
+      horasPorDiaFn = crearHorasPorDiaFn(periodos);
+    } else {
+      const config = await obtenerConfiguracionCuadrante(mes);
+      if (!config) throw new Error('No hay configuración cargada para este mes');
+
+      const { horasDiarias, horasLegalesMes: configHoras, socorristasPorDia: configSocos } = config;
+
+      horasLegalesMes = configHoras;
+      socosPorDia = configSocos;
+      horasPorDiaFn = () => horasDiarias;
+    }
 
     const resultado = distribuirTrabajadoresAleatorio({
       mes,
       trabajadores,
-      horasLegalesMes: horas_legales_mes,
-      socorristasPorDia: socorristas_por_dia,
-      horasPorDiaFn: () => horas_diarias
+      horasLegalesMes,
+      socorristasPorDia: socosPorDia,
+      horasPorDiaFn,
     });
 
     await guardarCuadranteEnBD(resultado);

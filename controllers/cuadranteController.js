@@ -10,17 +10,26 @@ function validarCampos(obj, campos) {
 }
 
 async function generarCuadranteHandler(req, res) {
-  const error = validarCampos(req.body, ['mes', 'horasDiarias', 'horasLegalesMes', 'socorristasPorDia']);
-  if (error) return res.status(400).json({ error });
+  const { mes, periodos, horasMensuales, socorristasPorDia } = req.body;
+
+ 
+  if (!mes) return res.status(400).json({ error: 'El campo "mes" es obligatorio' });
 
   try {
-    const resultado = await cuadranteService.generarCuadrante(req.body);
+    const resultado = await cuadranteService.generarCuadranteService({
+      mes,
+      periodos,
+      horasMensuales,
+      socorristasPorDia,
+    });
+
     res.json(resultado);
   } catch (error) {
     console.error('Error generando cuadrante:', error);
-    res.status(500).json({ error: 'Error generando cuadrante' });
+    res.status(500).json({ error: error.message });
   }
 }
+
 
 async function obtenerCuadranteHandler(req, res) {
   const { mes } = req.query;

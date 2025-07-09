@@ -6,6 +6,7 @@ function calcularMaxDiasSemana(horasPorDia, maxHorasSemana = 40) {
 }
 
 function asignarDiaATrabajador(trabajador, dia, horasDia, semanaNum) {
+  
   trabajador.diasTrabajados.push({ fecha: dia.fecha, dia: dia.dia });
   trabajador.horasCumplidas += horasDia;
   trabajador.diasPorSemana[semanaNum] = (trabajador.diasPorSemana[semanaNum] || 0) + 1;
@@ -27,9 +28,9 @@ function distribuirTrabajadoresAleatorio({
   const diasDelMes = obtenerDiasDelMes(mes);
   if (diasDelMes.length === 0) return [];
 
-  // Tomamos las horas del primer día para calcular maxDiasSemana
   const horasPrimerDia = horasPorDiaFn(diasDelMes[0].fecha);
   const maxDiasSemana = calcularMaxDiasSemana(horasPrimerDia);
+ 
 
   const asignaciones = trabajadores.map(({ id, nombre }) => ({
     id,
@@ -43,6 +44,8 @@ function distribuirTrabajadoresAleatorio({
     const { fecha } = dia;
     const horasDia = horasPorDiaFn(fecha);
     const semanaNum = getNumeroSemana(fecha, mes);
+
+   
 
     asignaciones.sort((a, b) => a.horasCumplidas - b.horasCumplidas);
 
@@ -70,3 +73,4 @@ function distribuirTrabajadoresAleatorio({
 }
 
 module.exports = distribuirTrabajadoresAleatorio;
+
