@@ -17,7 +17,7 @@ async function obtenerTrabajadoresActivos() {
   return rows;
 }
 
-// 🔧 NUEVA función para transformar periodos a función de horas por día
+
 function crearHorasPorDiaFn(periodos) {
   return (fechaStr) => {
     const fecha = new Date(fechaStr);
@@ -35,20 +35,25 @@ function crearHorasPorDiaFn(periodos) {
 function transformarFilasACuadrante(rows) {
   const resultadoMap = new Map();
 
-  rows.forEach(({ trabajador, fecha }) => {
-    if (!resultadoMap.has(trabajador)) {
-      resultadoMap.set(trabajador, []);
+  rows.forEach(({ usuario_id, nombre, apellido, playa, fecha }) => {
+    if (!resultadoMap.has(usuario_id)) {
+      resultadoMap.set(usuario_id, {
+        trabajador: `${nombre} ${apellido}`,
+        playa: playa || 'Sin playa',
+        dias_trabajados: []
+      });
     }
-    resultadoMap.get(trabajador).push({
+
+    resultadoMap.get(usuario_id).dias_trabajados.push({
       fecha: fecha.toISOString().slice(0, 10),
-      dia: fecha.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase()
+      dia: fecha.toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase()
     });
   });
 
-  return Array.from(resultadoMap, ([trabajador, dias_trabajados]) => ({ trabajador, dias_trabajados }));
+  return Array.from(resultadoMap.values());
 }
 
-// 🧠 FUNCIONALIDAD PRINCIPAL
+
 async function generarCuadranteService({ mes, periodos, horasMensuales, socorristasPorDia }) {
   try {
     const trabajadores = await obtenerTrabajadoresActivos();
@@ -88,11 +93,17 @@ async function generarCuadranteService({ mes, periodos, horasMensuales, socorris
 async function obtenerCuadranteService(mes) {
   try {
     const query = `
-      SELECT u.nombre AS trabajador, at.fecha
-      FROM asignaciones_trabajo at
-      JOIN usuarios u ON u.id = at.usuario_id
-      WHERE to_char(at.fecha, 'YYYY-MM') = $1
-      ORDER BY u.nombre, at.fecha
+      SELECT 
+  u.id AS usuario_id,
+  u.nombre,
+  u.apellido,
+  u.playa,
+  at.fecha
+FROM asignaciones_trabajo at
+JOIN usuarios u ON u.id = at.usuario_id
+WHERE to_char(at.fecha, 'YYYY-MM') = $1
+ORDER BY u.playa, u.nombre, u.apellido, at.fecha
+
     `;
     const { rows } = await pool.query(query, [mes]);
     return transformarFilasACuadrante(rows);
