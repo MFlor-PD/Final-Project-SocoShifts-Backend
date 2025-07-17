@@ -30,7 +30,6 @@ function distribuirTrabajadoresAleatorio({
 
   const horasPrimerDia = horasPorDiaFn(diasDelMes[0].fecha);
   const maxDiasSemana = calcularMaxDiasSemana(horasPrimerDia);
- 
 
   const asignaciones = trabajadores.map(({ id, nombre }) => ({
     id,
@@ -45,12 +44,11 @@ function distribuirTrabajadoresAleatorio({
     const horasDia = horasPorDiaFn(fecha);
     const semanaNum = getNumeroSemana(fecha, mes);
 
-   
-
     asignaciones.sort((a, b) => a.horasCumplidas - b.horasCumplidas);
 
     let asignadosHoy = 0;
 
+    // Primer intento con el límite normal
     for (const trabajador of asignaciones) {
       if (asignadosHoy >= socorristasPorDia) break;
       if (puedeTrabajarHoy(trabajador, fecha, maxDiasSemana, semanaNum)) {
@@ -59,8 +57,20 @@ function distribuirTrabajadoresAleatorio({
       }
     }
 
+    // Si faltan asignar y no se llegó al máximo, intento sin límite maxDiasSemana
     if (asignadosHoy < socorristasPorDia) {
-      console.warn(`⚠️ No se pudo asignar suficientes trabajadores para el día ${fecha}`);
+      for (const trabajador of asignaciones) {
+        if (asignadosHoy >= socorristasPorDia) break;
+        // Permitir asignar incluso si supera maxDiasSemana
+        const yaAsignadoHoy = trabajador.diasTrabajados.some(d => d.fecha === fecha);
+        if (!yaAsignadoHoy) {
+          asignarDiaATrabajador(trabajador, dia, horasDia, semanaNum);
+          asignadosHoy++;
+        }
+      }
+      if (asignadosHoy < socorristasPorDia) {
+        console.warn(`⚠️ No se pudo asignar suficientes trabajadores para el día ${fecha}`);
+      }
     }
   }
 
@@ -71,6 +81,7 @@ function distribuirTrabajadoresAleatorio({
     eficiencia: `${Math.round((horasCumplidas / horasLegalesMes) * 100)}%`,
   }));
 }
+
 
 module.exports = distribuirTrabajadoresAleatorio;
 
