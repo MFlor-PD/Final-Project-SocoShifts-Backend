@@ -22,6 +22,7 @@ async function generarCuadranteHandler(req, res) {
       horasMensuales,
       socorristasPorDia,
     });
+    
 
     res.json(resultado);
   } catch (error) {
