@@ -152,6 +152,16 @@ async function borrarMesService(mes) {
     throw new Error(`Error borrando mes: ${error.message}`);
   }
 }
+async function obtenerTodasConfiguracionesService() {
+  try {
+    const query = 'SELECT * FROM configuracion_cuadrante ORDER BY mes DESC';
+    const { rows } = await pool.query(query);
+    return rows;
+  } catch (error) {
+    throw new Error(`Error obteniendo todas las configuraciones: ${error.message}`);
+  }
+}
+
 
 module.exports = {
   generarCuadranteService,
@@ -161,4 +171,5 @@ module.exports = {
   guardarConfiguracionService,
   obtenerConfiguracionService,
   borrarMesService,
+  obtenerTodasConfiguracionesService
 };

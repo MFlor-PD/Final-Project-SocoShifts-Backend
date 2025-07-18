@@ -7,18 +7,25 @@ const validarMes = (mes) => {
 const obtenerConfiguracionHandler = async (req, res) => {
   try {
     const { mes } = req.query;
-    validarMes(mes);
+    if (mes) {
 
+    validarMes(mes);
     const config = await cuadranteService.obtenerConfiguracionService(mes);
+
     if (!config) {
       return res.status(404).json({ error: 'No hay configuración registrada para este mes' });
     }
 
     res.json(config);
-  } catch (error) {
+  }else  {
+    const todasConfigs = await cuadranteService.obtenerTodasConfiguracionesService();
+    return res.json(todasConfigs);
+  }
+}  catch (error) {
     console.error('Error al obtener configuración:', error.message);
     res.status(error.message.includes('obligatorio') ? 400 : 500).json({ error: error.message });
   }
+
 };
 
 const actualizarConfiguracionHandler = async (req, res) => {
