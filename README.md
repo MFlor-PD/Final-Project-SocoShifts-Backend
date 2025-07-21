@@ -87,7 +87,6 @@ DATABASE_URL
 /routes              # Definición de rutas CRUD
 /helpers             # Funciones auxiliares
 /services            # Lógica de negocio
-/middlewares         # JWT & protección de rutas
 /generated           # Prisma generated files
 /prisma              # Prisma schema y migraciones
 app.js               # Entrada principal backend
