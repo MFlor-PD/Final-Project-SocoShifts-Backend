@@ -24,11 +24,11 @@ Actualmente enfocada en salvamento y socorrismo, pero diseñada para escalar y a
 
 ## ⭐ Funcionalidades principales
 
-- 👥 **Gestión de trabajadores**: nombre, apellido, rol, playa asignada y autorización mediante token JWT.
-- 📆 **Configuración de cuadrante**: selección de mes y días preferentes.
-- ⏳ **Carga horaria flexible**: horas legales mensuales y diarias, incluso por periodos.
-- ⚙️ **Cálculo automático**: distribución balanceada de días libres y laborales.
-- 🖥️ **Visualización**: frontend React con calendario y asignaciones.
+- 👥 **Gestión de trabajadores**: nombre, apellido, rol, playa asignada.
+- 📆 **Configuración de cuadrante**: selección de mes.
+- ⏳ **Carga horaria flexible**: horas legales mensuales y diarias.
+- ⚙️ **Cálculo automático**: distribución balanceada de días laborales.
+- 🖥️ **Visualización**: frontend React, deploy con render y Netfily.
 
 ---
 
@@ -53,19 +53,16 @@ npm install
 
 - DEPENDENCIAS:
 
-npm install bcryptjs dotenv express jsonwebtoken mysql2 pg swagger-jsdoc swagger-ui-express jest @prisma/client
-npm install date-fns cors
+npm install dotenv express pg @prisma/client date-fns cors
 
 
 
 - CONFIGURAR BBDD PostgreSQL (AWS recomendado)
     - Crear las tablas mínimas:
 
-* usuarios
-* rol
-* playas
-* mes
-* dia_de_semana
+* usuarios (con nombre, apellido, rol, playa)
+* asignaciones_trabajo (tabla intermedia)
+* configuracion_cuadrante (mes, horas diarias, horas legales mensuales, socorristas por dia)
 
 - VARIABLES DE ENTORNO (.env)
 
@@ -78,17 +75,11 @@ PG_DB_PASSWORD
 PG_DB_NAME
 PG_DB_PORT
 
-#Token
-JWT_SECRET
-JWT_EXPIRES_IN
-
 # Prisma DB URL
 DATABASE_URL
 
 ## 🗂️ Estructura del proyecto
 
-/docs                # Documentación Swagger
-/test.js             # Tests con Jest y Supertest
 /certs               # Certificados para AWS (SSL)
 /config              # Configuración conexión PostgreSQL
 /models              # Consultas a DB
@@ -179,13 +170,11 @@ Ejemplo DELETE http://localhost:3000/configuracion-cuadrante/2025-11
     "auth": false,
     "mes": "2025-07",
     "dias_obligatorios": ["viernes", "sabado"],
-    "dias_trabajo_por_defecto": [
-      { "dia": "2025-07-02", "horario": "08:00-16:00" },
-      { "dia": "2025-07-03", "horario": "10:00-18:00" }
-    ],
+    "dias_trabajo_por_defecto": "mes"
     "dias_libres": [{ "dia": "2025-07-05" }],
     "horas_legales": 160,
-    "horas_trabajadas": 165
+    "horas_trabajadas": 165,
+    "Cantidad_socorristas por dia": 2
   }
 ]
 
